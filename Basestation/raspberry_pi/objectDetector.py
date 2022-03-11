@@ -66,9 +66,11 @@ def init(weights_path : str):
 
 def draw(image, predboxes):
     
-    image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2RGB)
+    #image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2RGB)
     image = utils.draw_bbox(image, predboxes)
     image = Image.fromarray(image.astype(np.uint8))
+    result = image.copy()
     image.show()
     image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2RGB)
     cv2.imwrite('output.jpg', image)
+    return result
