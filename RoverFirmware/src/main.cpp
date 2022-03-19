@@ -12,8 +12,8 @@ HTTPClient http;
 //
 
 // Select camera model
-#define CAMERA_MODEL_WROVER_KIT // Has PSRAM
-//#define CAMERA_MODEL_ESP_EYE // Has PSRAM
+//#define CAMERA_MODEL_WROVER_KIT // Has PSRAM
+#define CAMERA_MODEL_ESP_EYE // Has PSRAM
 //#define CAMERA_MODEL_M5STACK_PSRAM // Has PSRAM
 //#define CAMERA_MODEL_M5STACK_V2_PSRAM // M5Camera version B Has PSRAM
 //#define CAMERA_MODEL_M5STACK_WIDE // Has PSRAM
@@ -142,7 +142,7 @@ if (WiFi.status() != WL_CONNECTED){
   Serial.println("WiFi connected");
 
   camera_fb_t *fb = NULL;
-  for (int i = 0; i < 4; i++){
+  for (int i = 0; i < 3; i++){
     esp_camera_fb_return(fb);
     fb = esp_camera_fb_get();
   }
@@ -150,7 +150,7 @@ if (WiFi.status() != WL_CONNECTED){
   printmem();
 
 
-  http.begin("http://192.168.1.10:5001/image"); // Specify the URL
+  http.begin("http://192.168.1.105:5001/image"); // Specify the URL
 
   Serial.println("Image conversion successful...Sending");
   int httpCode = http.POST(fb->buf, fb->len);

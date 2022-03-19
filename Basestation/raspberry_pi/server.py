@@ -4,11 +4,14 @@ import cv2
 from PIL import Image
 from io import BytesIO
 from flask import render_template, send_from_directory, send_file, Flask, request
+import threading
+import time
 
 app = Flask(__name__)
 global persistentImage
+global images
 persistentImage = np.zeros(5)
-
+images = []
 
 
 # Init Argparser
@@ -36,16 +39,11 @@ objectDetector.init(args.modelpath, args.tiny)
 
 @app.route("/image", methods=['POST'])
 def process():
-    global persistentImage
+    global images
     data = request.get_data()
     print(f"Received Image with: {len(data)} bytes")
     image = np.array(Image.open(BytesIO(data)))
-    orig = image.copy()
-
-    
-    predboxes = objectDetector.detect(image,iou=0.45, score=0.5)
-    persistentImage = objectDetector.draw(orig, predboxes, args.show)
-    
+    images.append(image)
     
     #do all image processing and return json response
     return str(args.timeout)
@@ -62,8 +60,29 @@ def serve_pil_image(pil_img):
     return send_file(img_io, mimetype='image/jpeg')
 
 
-if __name__ == '__main__':
+def worker():
+    global images
+    while True:
+        time.sleep(1)
+        if (len(images) > 0):
+            image = images.pop()
+            orig = image.copy()
+            predboxes = objectDetector.detect(image,iou=0.45, score=0.5)
+            persistentImage = objectDetector.draw(orig, predboxes, args.show)
+        
+
+def main():
     try:
+        x = threading.Thread(target=worker)
+        x.start()
         app.run(host="0.0.0.0", port="5001")
     except Exception as e:
         print(e)
+        
+        
+        
+        
+        
+
+if __name__ == '__main__':
+    main()
