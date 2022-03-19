@@ -9,7 +9,8 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/server.py",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "args": ["checkpoints\\yolov4-tiny-416.tflite", "--show"]
         },
         {
             "name": "Python: Aktuelle Datei",
