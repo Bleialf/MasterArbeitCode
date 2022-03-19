@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/server.py",
             "console": "integratedTerminal",
-            "args": ["checkpoints\\yolov4-tiny-416.tflite", "--show"]
+            "args": ["checkpoints\\yolov4-tiny-416.tflite", "--show", "--tiny"]
         },
         {
             "name": "Python: Aktuelle Datei",
