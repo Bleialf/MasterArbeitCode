@@ -65,8 +65,8 @@ void setup()
   if (psramFound())
   {
     Serial.println("PSRAM FOUND");
-    config.frame_size = FRAMESIZE_HD;
-    config.jpeg_quality = 10;
+    config.frame_size = FRAMESIZE_UXGA;
+    config.jpeg_quality = 4;
     config.fb_count = 2;
   }
   else
@@ -116,6 +116,7 @@ void setup()
   // s->set_dcw(s, 0);                        // 0 = disable , 1 = enable
   // s->set_colorbar(s, 0);                   // 0 = disable , 1 = enable
   s->set_framesize(s, FRAMESIZE_HD);
+  s->set_vflip(s, 1);
 
 #if defined(CAMERA_MODEL_M5STACK_WIDE) || defined(CAMERA_MODEL_M5STACK_ESP32CAM)
   s->set_vflip(s, 1);

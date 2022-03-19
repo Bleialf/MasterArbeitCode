@@ -69,9 +69,10 @@ def worker():
             print(f"Detecting images...Images in buffer: {len(images)}")
             image = images.pop()
             orig = image.copy()
-            predboxes = objectDetector.detect(image,iou=0.45, score=0.5)
+            predboxes = objectDetector.detect(image,iou=0.45, score=0.2)
+            _, _, _, [num_boxes] = predboxes
             persistentImage = objectDetector.draw(orig, predboxes, args.show)
-            print("Detection completed")
+            print(f"We detected: {num_boxes} cars..")
             
         
 
