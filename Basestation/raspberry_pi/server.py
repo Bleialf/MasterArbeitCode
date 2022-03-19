@@ -64,7 +64,7 @@ def roverTime():
 @app.route("/average", methods=['GET'])
 def averageDuration():
     global times
-    return sum(times) / len(times)
+    return str(sum(times) / len(times))
 
 @app.route("/image", methods=['GET'])
 def retrieve():
