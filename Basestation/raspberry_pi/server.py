@@ -24,6 +24,10 @@ parser.add_argument('modelpath', type=str,
 parser.add_argument('--timeout', type=int, default=120, required=False,
                     help='The time answer to send to Roverstation')
 
+# Required positional argument
+parser.add_argument('--score', type=float, default=0.5, required=False,
+                    help='The minimum score to count as detection')
+
 # Switch
 parser.add_argument('--show', action='store_true',
                     help='When active the detected images will be shown on the Display (not available during headless operation)')
@@ -69,7 +73,7 @@ def worker():
             print(f"Detecting images...Images in buffer: {len(images)}")
             image = images.pop()
             orig = image.copy()
-            predboxes = objectDetector.detect(image,iou=0.45, score=0.2)
+            predboxes = objectDetector.detect(image,iou=0.45, score=args.score)
             _, _, _, [num_boxes] = predboxes
             persistentImage = objectDetector.draw(orig, predboxes, args.show)
             print(f"We detected: {num_boxes} cars..")
