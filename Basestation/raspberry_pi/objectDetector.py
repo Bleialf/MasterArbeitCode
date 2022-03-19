@@ -12,9 +12,11 @@ from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 
 global interpreter
+global tiny
 
 def detect(image, iou : float, score : float):
     global interpreter
+    global tiny
     
     STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config()
     input_size = 416
@@ -34,7 +36,10 @@ def detect(image, iou : float, score : float):
     interpreter.invoke()
     pred = [interpreter.get_tensor(output_details[i]['index']) for i in range(len(output_details))]
     
-    boxes, pred_conf = filter_boxes(pred[0], pred[1], score_threshold=0.25, input_shape=tf.constant([input_size, input_size]))
+    if tiny == True:
+        boxes, pred_conf = filter_boxes(pred[1], pred[0], score_threshold=0.25, input_shape=tf.constant([input_size, input_size]))
+    else:
+        boxes, pred_conf = filter_boxes(pred[0], pred[1], score_threshold=0.25, input_shape=tf.constant([input_size, input_size]))
     
 
     boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
@@ -52,14 +57,14 @@ def detect(image, iou : float, score : float):
     
     
     
-def init(weights_path : str):
+def init(weights_path : str, isTinyModel : bool):
     global interpreter
-    
+    global tiny
     # Loading config
     # config = ConfigProto()
     # config.gpu_options.allow_growth = True
     # session = InteractiveSession(config=config)
-       
+    tiny = isTinyModel   
     interpreter = tf.lite.Interpreter(model_path=weights_path)
     interpreter.allocate_tensors()
     
