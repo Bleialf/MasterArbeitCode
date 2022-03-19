@@ -16,6 +16,11 @@ parser = argparse.ArgumentParser(description='Optional app description')
 # Required positional argument
 parser.add_argument('modelpath', type=str,
                     help='The filepath to the tflite Model')
+
+# Required positional argument
+parser.add_argument('--timeout', type=int, default=120, required=False,
+                    help='The time answer to send to Roverstation')
+
 # Switch
 parser.add_argument('--show', action='store_true',
                     help='When active the detected images will be shown on the Display (not available during headless operation)')
@@ -43,7 +48,7 @@ def process():
     
     
     #do all image processing and return json response
-    return '120'
+    return str(args.timeout)
 
 
 @app.route("/image", methods=['GET'])
