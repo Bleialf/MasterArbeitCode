@@ -1,5 +1,6 @@
 import objectDetector
 import numpy as np
+import argparse
 import cv2
 from PIL import Image
 from io import BytesIO
@@ -8,25 +9,38 @@ from flask import render_template, send_from_directory, send_file, Flask, reques
 app = Flask(__name__)
 global persistentImage
 persistentImage = np.zeros(5)
-objectDetector.init('checkpoints\\yolov4-tiny-416.tflite')
 
+
+
+# Init Argparser
+parser = argparse.ArgumentParser(description='Optional app description')
+# Required positional argument
+parser.add_argument('modelpath', type=str,
+                    help='The filepath to the tflite Model')
+# Switch
+parser.add_argument('--show', action='show_images',
+                    help='When active the detected images will be shown on the Display (not available during headless operation)')
+
+args = parser.parse_args()
+
+# Init Detector
+objectDetector.init(args.modelpath)
 
 @app.route("/image", methods=['POST'])
 def process():
     global persistentImage
     data = request.get_data()
-    print(f"datalength: {len(data)}")
+    print(f"Received Image with: {len(data)}bytes")
     image = np.array(Image.open(BytesIO(data)))
-    orig = np.array(Image.open(BytesIO(data)))
-    # image = np.frombuffer(image, np.uint8)
-    # orig = cv2.imdecode(image, cv2.IMREAD_COLOR) 
-    # image = cv2.imdecode(image, cv2.IMREAD_COLOR) 
+    orig = image.copy()
+
     
     predboxes = objectDetector.detect(image,iou=0.45, score=0.5)
-    persistentImage = objectDetector.draw(orig, predboxes)
+    if (args.show):
+        persistentImage = objectDetector.draw(orig, predboxes)
     
     
-    ##do all image processing and return json response
+    #do all image processing and return json response
     return '120'
 
 
