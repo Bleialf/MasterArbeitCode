@@ -75,7 +75,6 @@ def load_weights(model, weights_file, model_name='yolov4', is_tiny=False):
 
 def read_class_names(class_file_name):
     names = {}
-    print(os.getcwd())
     with open(class_file_name, 'r') as data:
         for ID, name in enumerate(data):
             names[ID] = name.strip('\n')
