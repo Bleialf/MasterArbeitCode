@@ -70,6 +70,8 @@ def worker():
             orig = image.copy()
             predboxes = objectDetector.detect(image,iou=0.45, score=0.5)
             persistentImage = objectDetector.draw(orig, predboxes, args.show)
+            print("Detection completed")
+            
         
 
 def main():
