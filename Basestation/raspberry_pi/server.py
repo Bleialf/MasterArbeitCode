@@ -62,6 +62,7 @@ def serve_pil_image(pil_img):
 
 def worker():
     global images
+    global persistentImage
     while True:
         time.sleep(1)
         if (len(images) > 0):
