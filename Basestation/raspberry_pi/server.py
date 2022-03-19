@@ -19,7 +19,6 @@ parser.add_argument('modelpath', type=str,
 # Switch
 parser.add_argument('--show', action='store_true',
                     help='When active the detected images will be shown on the Display (not available during headless operation)')
-
 # Switch
 parser.add_argument('--tiny', action='store_true',
                     help='Model is yolo tiny')
@@ -28,7 +27,7 @@ args = parser.parse_args()
 
 # Init Detector
 import objectDetector
-objectDetector.init(args.modelpath)
+objectDetector.init(args.modelpath, args.tiny)
 
 @app.route("/image", methods=['POST'])
 def process():
