@@ -10,9 +10,10 @@ import time
 app = Flask(__name__)
 global persistentImage
 global images
+global times
 persistentImage = np.zeros(5)
 images = []
-
+times = []
 
 # Init Argparser
 parser = argparse.ArgumentParser(description='Optional app description')
@@ -52,6 +53,18 @@ def process():
     #do all image processing and return json response
     return str(args.timeout)
 
+@app.route("/time", methods=['POST'])
+def roverTime():
+    global times
+    duration = int(request.data.decode())
+    times.append(duration)
+    print(times)
+    return ('', 204)
+    
+@app.route("/average", methods=['GET'])
+def averageDuration():
+    global times
+    return sum(times) / len(times)
 
 @app.route("/image", methods=['GET'])
 def retrieve():

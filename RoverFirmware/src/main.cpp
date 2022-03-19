@@ -5,6 +5,9 @@
 
 HTTPClient http;
 
+RTC_DATA_ATTR unsigned long* times;
+RTC_DATA_ATTR int pointer = 0;
+RTC_DATA_ATTR bool initialized = false;
 //
 // WARNING!!! PSRAM IC required for UXGA resolution and high JPEG quality
 //            Ensure ESP32 Wrover Module or other board with PSRAM is selected
@@ -12,8 +15,8 @@ HTTPClient http;
 //
 
 // Select camera model
-//#define CAMERA_MODEL_WROVER_KIT // Has PSRAM
-#define CAMERA_MODEL_ESP_EYE // Has PSRAM
+#define CAMERA_MODEL_WROVER_KIT // Has PSRAM
+//#define CAMERA_MODEL_ESP_EYE // Has PSRAM
 //#define CAMERA_MODEL_M5STACK_PSRAM // Has PSRAM
 //#define CAMERA_MODEL_M5STACK_V2_PSRAM // M5Camera version B Has PSRAM
 //#define CAMERA_MODEL_M5STACK_WIDE // Has PSRAM
@@ -29,11 +32,16 @@ const char *password = "19dawson91";
 
 void startCameraServer();
 void printmem();
+void printTimes();
+void printAvg();
 
 
 
 void setup()
 {
+  initialized = true;
+  times = (unsigned long*)malloc(sizeof(unsigned long) * 100);
+  unsigned long start = millis();
   Serial.begin(115200);
   Serial.setDebugOutput(true);
   Serial.println();
@@ -115,7 +123,7 @@ void setup()
   // s->set_vflip(s, 0);                      // 0 = disable , 1 = enable
   // s->set_dcw(s, 0);                        // 0 = disable , 1 = enable
   // s->set_colorbar(s, 0);                   // 0 = disable , 1 = enable
-  s->set_framesize(s, FRAMESIZE_HD);
+  s->set_framesize(s, FRAMESIZE_UXGA);
   s->set_vflip(s, 1);
 
 #if defined(CAMERA_MODEL_M5STACK_WIDE) || defined(CAMERA_MODEL_M5STACK_ESP32CAM)
@@ -176,8 +184,17 @@ if (WiFi.status() != WL_CONNECTED){
     Serial.println("Error on HTTP request");
     Serial.println("Sleeping 10 Seconds");
   }
+  http.end();
 
-  // http.end();
+  unsigned long dif = millis() - start;
+  Serial.printf("Whole Operation took %dms\n", dif);
+  Serial.printf("Whole Operation took %dms\n", dif);
+
+  http.begin("http://192.168.1.105:5001/time");
+
+  http.POST(String(dif));
+  http.end();
+
   Serial.printf("Sleeping for %dseconds\n", sleeptime);
   esp_sleep_enable_timer_wakeup(1000000 * sleeptime);
   esp_deep_sleep_start();
