@@ -30,14 +30,13 @@ objectDetector.init(args.modelpath)
 def process():
     global persistentImage
     data = request.get_data()
-    print(f"Received Image with: {len(data)}bytes")
+    print(f"Received Image with: {len(data)} bytes")
     image = np.array(Image.open(BytesIO(data)))
     orig = image.copy()
 
     
     predboxes = objectDetector.detect(image,iou=0.45, score=0.5)
-    if (args.show):
-        persistentImage = objectDetector.draw(orig, predboxes)
+    persistentImage = objectDetector.draw(orig, predboxes, args.show)
     
     
     #do all image processing and return json response
