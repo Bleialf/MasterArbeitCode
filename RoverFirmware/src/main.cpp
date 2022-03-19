@@ -142,7 +142,7 @@ if (WiFi.status() != WL_CONNECTED){
   Serial.println("WiFi connected");
 
   camera_fb_t *fb = NULL;
-  for (int i = 0; i < 3; i++){
+  for (int i = 0; i < 4; i++){
     esp_camera_fb_return(fb);
     fb = esp_camera_fb_get();
   }
