@@ -4,10 +4,6 @@
 #include "esp_http_client.h"
 
 HTTPClient http;
-
-RTC_DATA_ATTR unsigned long* times;
-RTC_DATA_ATTR int pointer = 0;
-RTC_DATA_ATTR bool initialized = false;
 //
 // WARNING!!! PSRAM IC required for UXGA resolution and high JPEG quality
 //            Ensure ESP32 Wrover Module or other board with PSRAM is selected
@@ -15,8 +11,8 @@ RTC_DATA_ATTR bool initialized = false;
 //
 
 // Select camera model
-#define CAMERA_MODEL_WROVER_KIT // Has PSRAM
-//#define CAMERA_MODEL_ESP_EYE // Has PSRAM
+//#define CAMERA_MODEL_WROVER_KIT // Has PSRAM
+#define CAMERA_MODEL_ESP_EYE // Has PSRAM
 //#define CAMERA_MODEL_M5STACK_PSRAM // Has PSRAM
 //#define CAMERA_MODEL_M5STACK_V2_PSRAM // M5Camera version B Has PSRAM
 //#define CAMERA_MODEL_M5STACK_WIDE // Has PSRAM
@@ -39,8 +35,6 @@ void printAvg();
 
 void setup()
 {
-  initialized = true;
-  times = (unsigned long*)malloc(sizeof(unsigned long) * 100);
   unsigned long start = millis();
   Serial.begin(115200);
   Serial.setDebugOutput(true);
@@ -75,7 +69,7 @@ void setup()
     Serial.println("PSRAM FOUND");
     config.frame_size = FRAMESIZE_UXGA;
     config.jpeg_quality = 4;
-    config.fb_count = 2;
+    config.fb_count = 1;
   }
   else
   {
@@ -100,29 +94,6 @@ void setup()
 
   sensor_t *s = esp_camera_sensor_get();
 
-  // // CAMERA SETTINGS
-  // s->set_brightness(s, 0);     // -2 to 2
-  // s->set_contrast(s, 0);      // -2 to 2
-  // s->set_saturation(s, 0);    // -2 to 2
-  // s->set_special_effect(s, 0); // 0 to 6 (0 - No Effect, 1 - Negative, 2 - Grayscale, 3 - Red Tint, 4 - Green Tint, 5 - Blue Tint, 6 - Sepia)
-  // s->set_whitebal(s, 1);       // 0 = disable , 1 = enable
-  // s->set_awb_gain(s, 1);  
-  // s->set_whitebal(s, 1);        // 0 to 4 - if awb_gain enabled (0 - Auto, 1 - Sunny, 2 - Cloudy, 3 - Office, 4 - Home)
-  // s->set_exposure_ctrl(s, 1);  // 0 = disable , 1 = enable
-  // // s->set_aec2(s, 0);           // 0 = disable , 1 = enable
-  // // s->set_ae_level(s, 2); // -2 to 2
-  // // s->set_aec_value(s, 400); // 0 to 1200
-  // s->set_gain_ctrl(s, 0);                  // 0 = disable , 1 = enable
-  // s->set_agc_gain(s, 0);                   // 0 to 30
-  // s->set_gainceiling(s, (gainceiling_t)6); // 0 to 6
-  // s->set_bpc(s, 1);                        // 0 = disable , 1 = enable
-  // s->set_wpc(s, 1);                        // 0 = disable , 1 = enable
-  // s->set_raw_gma(s, 1);                    // 0 = disable , 1 = enable (makes much lighter and noisy)
-  // s->set_lenc(s, 0);                       // 0 = disable , 1 = enable
-  // s->set_hmirror(s, 0);                    // 0 = disable , 1 = enable
-  // s->set_vflip(s, 0);                      // 0 = disable , 1 = enable
-  // s->set_dcw(s, 0);                        // 0 = disable , 1 = enable
-  // s->set_colorbar(s, 0);                   // 0 = disable , 1 = enable
   s->set_framesize(s, FRAMESIZE_UXGA);
   s->set_vflip(s, 1);
 
@@ -132,6 +103,7 @@ void setup()
 #endif
 
   WiFi.begin(ssid, password);
+  WiFi.begin(ssid, password, 6);
   int counter = 0;
   while (WiFi.status() != WL_CONNECTED && counter < 10)
   {
