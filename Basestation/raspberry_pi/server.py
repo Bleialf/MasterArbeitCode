@@ -65,6 +65,7 @@ def worker():
     while True:
         time.sleep(1)
         if (len(images) > 0):
+            print(f"Detecting images...Images in buffer: {len(images)}")
             image = images.pop()
             orig = image.copy()
             predboxes = objectDetector.detect(image,iou=0.45, score=0.5)
