@@ -12,7 +12,15 @@ import os
 import sys
 import logging
 
-sys.stdout = open('serverlog.log', 'w')
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler("debug.log"),
+        logging.StreamHandler()
+    ]
+)
 
 
 app = Flask(__name__)
@@ -64,7 +72,7 @@ delay = args.initdelay
 def process():
     global images
     data = request.get_data()
-    print(f"Received Image with: {len(data)} bytes")
+    logging.info(f"Received Image with: {len(data)} bytes")
     image = np.array(Image.open(BytesIO(data)))
     images.append(image)
     
@@ -76,7 +84,7 @@ def roverTime():
     global times
     duration = int(request.data.decode())
     times.append(duration)
-    print(times)
+    logging.info(times)
     return ('', 204)
     
 @app.route("/average", methods=['GET'])
@@ -103,23 +111,23 @@ def worker():
         time.sleep(1)
         if (len(images) > 0):
             delay = args.sleepdelay
-            print(f"Detecting images...Images in buffer: {len(images)}")
+            logging.info(f"Detecting images...Images in buffer: {len(images)}")
             image = images.pop()
             orig = image.copy()
             predboxes = objectDetector.detect(image,iou=0.45, score=args.score)
             _, _, _, [num_boxes] = predboxes
             persistentImage = objectDetector.draw(orig, predboxes, args.show)
-            print(f"We detected: {num_boxes} cars..")
+            logging.info(f"We detected: {num_boxes} cars..")
         else:
             if (delay == 0): 
                 startTime = tm.getNextTime()
                 witty.set_startup(startTime.day, startTime.hour, startTime.minute, startTime.second)
-                print(f"Shutting down now. Waking up at {startTime}")
+                logging.info(f"Shutting down now. Waking up at {startTime}")
                 os.system("sudo shutdown -h now")
                 
                 
                 
-            print(f"Shutting down in {delay} seconds")
+            logging.info(f"Shutting down in {delay} seconds")
             delay -= 1
             
         
@@ -132,7 +140,7 @@ def main():
         x.start()
         app.run(host="0.0.0.0", port="5001")
     except Exception as e:
-        print(e)
+        logging.error(e)
         
         
         
