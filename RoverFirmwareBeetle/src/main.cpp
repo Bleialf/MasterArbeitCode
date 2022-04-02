@@ -229,8 +229,8 @@ if (WiFi.status() != WL_CONNECTED){
 
   printmem();
 
-
   http.begin(F("http://192.168.179.2:5001/image")); // Specify the URL
+  http.setConnectTimeout(300);
 
 #ifdef Debug
   Serial.println(F("Image conversion successful..."));
@@ -261,6 +261,7 @@ if (WiFi.status() != WL_CONNECTED){
   #endif
 
   http.begin(F("http://192.168.179.2:5001/time"));
+  http.setConnectTimeout(300);
 
   http.POST(String(dif));
   http.end();
