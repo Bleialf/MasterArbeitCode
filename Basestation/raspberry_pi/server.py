@@ -11,10 +11,6 @@ import scheduling.timeManagement as tm
 import os
 
 app = Flask(__name__)
-global persistentImage
-global images
-global times
-delay = 10
 persistentImage = np.zeros(5)
 images = []
 times = []
@@ -33,6 +29,10 @@ parser.add_argument('--timeout', type=int, default=120, required=False,
                     help='The time answer to send to Roverstation')
 
 # Required positional argument
+parser.add_argument('--sleepdelay', type=int, default=30, required=False,
+                    help='How long to wait before going back to sleep')
+
+# Required positional argument
 parser.add_argument('--score', type=float, default=0.5, required=False,
                     help='The minimum score to count as detection')
 
@@ -49,7 +49,7 @@ args = parser.parse_args()
 import objectDetector
 objectDetector.init(args.modelpath, args.tiny)
 witty = wittyPy.WittyPi(args.wittypipath)
-
+delay = args.sleepdelay
 
 @app.route("/image", methods=['POST'])
 def process():
@@ -93,7 +93,7 @@ def worker():
     while True:
         time.sleep(1)
         if (len(images) > 0):
-            delay = 10
+            delay = args.sleepdelay
             print(f"Detecting images...Images in buffer: {len(images)}")
             image = images.pop()
             orig = image.copy()
