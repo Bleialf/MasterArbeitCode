@@ -104,6 +104,7 @@ def worker():
             if (delay == 0): 
                 startTime = tm.getNextTime()
                 witty.set_startup(startTime.day, startTime.hour, startTime.minute, startTime.second)
+                print(f"Shutting down now. Waking up at {startTime}")
                 os.system("sudo shutdown -h now")
                 
                 
