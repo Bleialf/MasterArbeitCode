@@ -47,7 +47,7 @@ args = parser.parse_args()
 # Init Detector
 import objectDetector
 objectDetector.init(args.modelpath, args.tiny)
-witty = wittyPy.WittyPi(wittypipath)
+witty = wittyPy.WittyPi(args.wittypipath)
 
 
 @app.route("/image", methods=['POST'])
