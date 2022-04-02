@@ -9,9 +9,14 @@ import time
 import wittyPy
 import scheduling.timeManagement as tm
 import os
+import sys
+import logging
 
-log = open("myprog.log", "a")
-sys.stdout = log
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+logger = logging.getLogger()
+logger.addHandler(logging.FileHandler('server.log', 'a'))
+print = logger.info
+
 
 app = Flask(__name__)
 persistentImage = np.zeros(5)
