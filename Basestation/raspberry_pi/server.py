@@ -6,11 +6,14 @@ from io import BytesIO
 from flask import render_template, send_from_directory, send_file, Flask, request
 import threading
 import time
+import wittyPy
+import scheduling.timeManagement as tm
 
 app = Flask(__name__)
 global persistentImage
 global images
 global times
+delay = 10
 persistentImage = np.zeros(5)
 images = []
 times = []
@@ -20,6 +23,9 @@ parser = argparse.ArgumentParser(description='Optional app description')
 # Required positional argument
 parser.add_argument('modelpath', type=str,
                     help='The filepath to the tflite Model')
+
+parser.add_argument('wittypipath', type=str,
+                    help='The folderpath to the wittypi')
 
 # Required positional argument
 parser.add_argument('--timeout', type=int, default=120, required=False,
@@ -41,6 +47,8 @@ args = parser.parse_args()
 # Init Detector
 import objectDetector
 objectDetector.init(args.modelpath, args.tiny)
+witty = wittyPy.WittyPi(wittypipath)
+
 
 @app.route("/image", methods=['POST'])
 def process():
@@ -80,9 +88,11 @@ def serve_pil_image(pil_img):
 def worker():
     global images
     global persistentImage
+    global delay
     while True:
         time.sleep(1)
         if (len(images) > 0):
+            delay = 10
             print(f"Detecting images...Images in buffer: {len(images)}")
             image = images.pop()
             orig = image.copy()
@@ -90,6 +100,18 @@ def worker():
             _, _, _, [num_boxes] = predboxes
             persistentImage = objectDetector.draw(orig, predboxes, args.show)
             print(f"We detected: {num_boxes} cars..")
+        else:
+            if (delay == 0): 
+                startTime = tm.getNextTime()
+                witty.set_startup(startTime.day, startTime.hour, startTime.minute, startTime.second)
+                os.system("sudo shutdown -h now")
+                
+                
+                
+            print(f"Shutting down in {delay} seconds")
+            delay -= 1
+            
+        
             
         
 

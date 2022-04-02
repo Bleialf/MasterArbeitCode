@@ -12,8 +12,8 @@ uint8_t vid, pid;
 uint8_t temp;
 
 #define JPEG_BUF_SIZE 110000
-#define CAM_MOSFET_PIN 0
-//#define Debug
+#define CAM_MOSFET_PIN 16
+#define Debug
 
 // ArduCAM driver handle with CS pin defined as pin 5 for ESP32 dev kits
 const int CS = 5;

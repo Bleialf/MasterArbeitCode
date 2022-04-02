@@ -5,3 +5,4 @@ absl-py
 easydict
 matplotlib
 pillow
+wittyPy
