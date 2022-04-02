@@ -30,7 +30,11 @@ parser.add_argument('--timeout', type=int, default=120, required=False,
 
 # Required positional argument
 parser.add_argument('--sleepdelay', type=int, default=30, required=False,
-                    help='How long to wait before going back to sleep')
+                    help='How long to wait between images before going back to sleep')
+
+# Required positional argument
+parser.add_argument('--initdelay', type=int, default=30, required=False,
+                    help='How long to wait for the first image before going to sleep')
 
 # Required positional argument
 parser.add_argument('--score', type=float, default=0.5, required=False,
@@ -49,7 +53,7 @@ args = parser.parse_args()
 import objectDetector
 objectDetector.init(args.modelpath, args.tiny)
 witty = wittyPy.WittyPi(args.wittypipath)
-delay = args.sleepdelay
+delay = args.initdelay
 
 @app.route("/image", methods=['POST'])
 def process():
