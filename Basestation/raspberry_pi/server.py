@@ -8,6 +8,7 @@ import threading
 import time
 import wittyPy
 import scheduling.timeManagement as tm
+import os
 
 app = Flask(__name__)
 global persistentImage
