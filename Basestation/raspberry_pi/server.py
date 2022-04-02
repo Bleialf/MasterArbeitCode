@@ -6,6 +6,7 @@ from io import BytesIO
 from flask import render_template, send_from_directory, send_file, Flask, request
 import threading
 import time
+from datetime import datetime
 import wittyPy
 import scheduling.timeManagement as tm
 import os
@@ -42,12 +43,17 @@ parser.add_argument('--timeout', type=int, default=120, required=False,
                     help='The time answer to send to Roverstation')
 
 # Required positional argument
-parser.add_argument('--sleepdelay', type=int, default=30, required=False,
+parser.add_argument('--sleepdelay', type=int, default=10, required=False,
                     help='How long to wait between images before going back to sleep')
 
 # Required positional argument
 parser.add_argument('--initdelay', type=int, default=30, required=False,
                     help='How long to wait for the first image before going to sleep')
+
+
+# Required positional argument
+parser.add_argument('--bootdelay', type=int, default=30, required=False,
+                    help='Time between Basestation boot and rover boot')
 
 # Required positional argument
 parser.add_argument('--score', type=float, default=0.5, required=False,
@@ -76,8 +82,13 @@ def process():
     image = np.array(Image.open(BytesIO(data)))
     images.append(image)
     
-    #do all image processing and return json response
-    return str(args.timeout)
+    nextTime = tm.getNextTime()
+    now = datetime.now()
+    timeToNext = nextTime - now
+    roversleep = timeToNext.total_seconds() + args.bootdelay
+    logging.info(f"Next time for Rover is: {roversleep}")
+    
+    return str(int(roversleep))
 
 @app.route("/time", methods=['POST'])
 def roverTime():
