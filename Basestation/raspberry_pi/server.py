@@ -10,6 +10,9 @@ import wittyPy
 import scheduling.timeManagement as tm
 import os
 
+log = open("myprog.log", "a")
+sys.stdout = log
+
 app = Flask(__name__)
 persistentImage = np.zeros(5)
 images = []
