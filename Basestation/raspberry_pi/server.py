@@ -12,10 +12,7 @@ import os
 import sys
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(message)s')
-logger = logging.getLogger()
-logger.addHandler(logging.FileHandler('server.log', 'a'))
-print = logger.info
+sys.stdout = open('serverlog.log', 'w')
 
 
 app = Flask(__name__)
