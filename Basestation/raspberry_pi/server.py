@@ -23,6 +23,8 @@ logging.basicConfig(
     ]
 )
 
+roverContactOccured = False
+nextRoverstart = datetime.now()
 
 app = Flask(__name__)
 persistentImage = np.zeros(5)
@@ -78,16 +80,26 @@ delay = args.initdelay
 @app.route("/image", methods=['POST'])
 def process():
     global images
+    global nextRoverstart
+    global roverContactOccured
+    
     data = request.get_data()
     logging.info(f"Received Image with: {len(data)} bytes")
     image = np.array(Image.open(BytesIO(data)))
     images.append(image)
     
-    rovertime = tm.getNextTime(datetime.now()) + timedelta(seconds=args.bootdelay)
+    if roverContactOccured:
+        roverTime = nextRoverstart
+    else:
+        rovertime = tm.getNextTime(datetime.now()) + timedelta(seconds=args.bootdelay)
+        nextRoverstart = rovertime
+        
     now = datetime.now()
     timeToNext = rovertime - now
     roversleep = timeToNext.total_seconds()
     logging.info(f"Next time for Rover is in {roversleep}seconds at {rovertime}")
+    
+    roverContactOccured = True
     
     return str(int(roversleep))
 
@@ -132,8 +144,12 @@ def worker():
             logging.info(f"We detected: {num_boxes} cars..")
         else:
             if (delay == 0 and args.wittypipath is not None): 
-                startTime = tm.getNextTime(datetime.now()) - timedelta(seconds=args.bootdelay)
-                witty.set_startup(startTime.day, startTime.hour, startTime.minute, startTime.second)
+                if roverContactOccured:
+                    starttime = nextRoverstart - timedelta(seconds=args.bootdelay)
+                else:
+                    startTime = tm.getNextTime(datetime.now()) - timedelta(seconds=args.bootdelay)
+                    
+                witty.set_startup('??', startTime.hour, startTime.minute, startTime.second)
                 
                 logging.info(f"Shutting down now. Waking up in {(startTime - datetime.now()).total_seconds()} seconds at {startTime}")
                 os.system("sudo shutdown -h now")
