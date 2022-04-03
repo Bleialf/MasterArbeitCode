@@ -35,7 +35,7 @@ parser = argparse.ArgumentParser(description='Optional app description')
 parser.add_argument('modelpath', type=str,
                     help='The filepath to the tflite Model')
 
-parser.add_argument('wittypipath', type=str,
+parser.add_argument('--wittypipath', type=str, required=False,
                     help='The folderpath to the wittypi')
 
 # Required positional argument
@@ -71,7 +71,8 @@ args = parser.parse_args()
 # Init Detector
 import objectDetector
 objectDetector.init(args.modelpath, args.tiny)
-witty = wittyPy.WittyPi(args.wittypipath)
+if args.wittypipath is not None:
+    witty = wittyPy.WittyPi(args.wittypipath)
 delay = args.initdelay
 
 @app.route("/image", methods=['POST'])
@@ -82,11 +83,11 @@ def process():
     image = np.array(Image.open(BytesIO(data)))
     images.append(image)
     
-    rovertime = tm.getNextTime() + timedelta(seconds=args.bootdelay)
+    rovertime = tm.getNextTime(datetime.now()) + timedelta(seconds=args.bootdelay)
     now = datetime.now()
     timeToNext = rovertime - now
     roversleep = timeToNext.total_seconds()
-    logging.info(f"Next time for Rover is in {roversleep}seconds at {nextTime}")
+    logging.info(f"Next time for Rover is in {roversleep}seconds at {rovertime}")
     
     return str(int(roversleep))
 
@@ -130,7 +131,7 @@ def worker():
             persistentImage = objectDetector.draw(orig, predboxes, args.show)
             logging.info(f"We detected: {num_boxes} cars..")
         else:
-            if (delay == 0): 
+            if (delay == 0 and args.wittypipath is not None): 
                 startTime = tm.getNextTime() - timedelta(seconds=args.bootdelay)
                 witty.set_startup(startTime.day, startTime.hour, startTime.minute, startTime.second)
                 
