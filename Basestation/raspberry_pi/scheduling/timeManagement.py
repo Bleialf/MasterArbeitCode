@@ -3,44 +3,56 @@ import os
 from datetime import datetime, timedelta
 
 filePath = 'time.txt'
+intervals = []
 times = []
 
 def init():
-    global times
-    times = getDefault()
+    global intervals
+    intervals = getDefault()
     save()
 
 
 def getDefault():
-    times = []
+    intervals = []
     for i in range(24):
-        times.append(10)
-    return times
+        intervals.append(10)
+    return intervals
         
 def save():
-    global times
+    global intervals
     with open(filePath, 'w') as f:
-        json.dump(times, f)
+        json.dump((intervals, lastMeasurement), f)
         
 def load():
-    global times
+    global intervals
     with open(filePath, 'r') as f:
-        times = json.load(f)
-        
-def getNextTime():
-    now = datetime.now()
-    index = now.hour
-    skippedHours = 0
-    if (times[index] == 0):
-        while(times[index] == 0):
-            index += 1
-            skippedHours += 1
-            if index == 24:
-                index = 0
-        return (now + timedelta(hours=skippedHours)).replace(minute=0, second=0, microsecond=0)
-    return now + timedelta(minutes=times[index])
+        intervals = json.load(f)
+
+def parseIntervals():
+    global times
+    today = datetime.now()
+    currenttime = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    times = []
+    while currenttime.day == today.day:
+        while(intervals[currenttime.hour] == 0):
+            if currenttime.day != today.day:
+                break
+            currenttime = (currenttime + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
+            
+        if currenttime.day != today.day:
+                times.append(times[0] + timedelta(days=1))
+                break
+        times.append(currenttime)
+        currenttime = currenttime + timedelta(minutes=intervals[currenttime.hour])
+
+def getNextTime(current):
+    for time in times:
+        if (current < time):
+            return time
 
 if not os.path.exists(filePath):
     init()
+    parseIntervals()
 else:
     load()
+    parseIntervals()

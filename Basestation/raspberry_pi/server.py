@@ -82,9 +82,9 @@ def process():
     image = np.array(Image.open(BytesIO(data)))
     images.append(image)
     
-    nextTime = tm.getNextTime() + timedelta(seconds=args.bootdelay)
+    rovertime = tm.getNextTime() + timedelta(seconds=args.bootdelay)
     now = datetime.now()
-    timeToNext = nextTime - now
+    timeToNext = rovertime - now
     roversleep = timeToNext.total_seconds()
     logging.info(f"Next time for Rover is in {roversleep}seconds at {nextTime}")
     
@@ -131,7 +131,7 @@ def worker():
             logging.info(f"We detected: {num_boxes} cars..")
         else:
             if (delay == 0): 
-                startTime = tm.getNextTime()
+                startTime = tm.getNextTime() - timedelta(seconds=args.bootdelay)
                 witty.set_startup(startTime.day, startTime.hour, startTime.minute, startTime.second)
                 
                 logging.info(f"Shutting down now. Waking up in {(startTime - datetime.now()).total_seconds()} seconds at {startTime}")

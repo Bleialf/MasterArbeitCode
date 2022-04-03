@@ -134,14 +134,17 @@ struct RTCData{
 RTC_DATA_ATTR bool rtcAvailable;
 RTC_DATA_ATTR RTCData rtcstate;
 
-const char *ssid = "camhotspot";
-const char *password = NULL;
+// const char *ssid = "camhotspot";
+// const char *password = NULL;
+
+const char *ssid = "RTG-Control-Unit";
+const char *password = "19dawson91";
 
 //We will use static ip
-IPAddress ip( 192,168,179,123 );// pick your own suitable static IP address
-IPAddress gateway(  192,168,179,1 ); // may be different for your network
+IPAddress ip( 192,168,1,123 );// pick your own suitable static IP address
+IPAddress gateway(  192,168,1,1 ); // may be different for your network
 IPAddress subnet( 255, 255, 255, 0 ); // may be different for your network (but this one is pretty standard)
-IPAddress dns(192,168,179,1);
+IPAddress dns(192,168,1,1);
 
 
 void printmem();
@@ -229,8 +232,8 @@ if (WiFi.status() != WL_CONNECTED){
 
   printmem();
 
-  http.begin(F("http://192.168.179.2:5001/image")); // Specify the URL
-  http.setConnectTimeout(300);
+  http.begin(F("http://192.168.1.105:5001/image")); // Specify the URL
+  http.setConnectTimeout(1000);
 
 #ifdef Debug
   Serial.println(F("Image conversion successful..."));
@@ -260,8 +263,8 @@ if (WiFi.status() != WL_CONNECTED){
   Serial.printf("Whole Operation took %dms\n", dif);
   #endif
 
-  http.begin(F("http://192.168.179.2:5001/time"));
-  http.setConnectTimeout(300);
+  http.begin(F("http://192.168.1.105:5001/time"));
+  http.setConnectTimeout(1000);
 
   http.POST(String(dif));
   http.end();
