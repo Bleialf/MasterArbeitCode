@@ -145,7 +145,7 @@ def worker():
         else:
             if (delay == 0 and args.wittypipath is not None): 
                 if roverContactOccured:
-                    starttime = nextRoverstart - timedelta(seconds=args.bootdelay)
+                    startTime = nextRoverstart - timedelta(seconds=args.bootdelay)
                 else:
                     startTime = tm.getNextTime(datetime.now()) - timedelta(seconds=args.bootdelay)
                     
