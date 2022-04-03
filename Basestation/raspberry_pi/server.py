@@ -132,7 +132,7 @@ def worker():
             logging.info(f"We detected: {num_boxes} cars..")
         else:
             if (delay == 0 and args.wittypipath is not None): 
-                startTime = tm.getNextTime() - timedelta(seconds=args.bootdelay)
+                startTime = tm.getNextTime(datetime.now()) - timedelta(seconds=args.bootdelay)
                 witty.set_startup(startTime.day, startTime.hour, startTime.minute, startTime.second)
                 
                 logging.info(f"Shutting down now. Waking up in {(startTime - datetime.now()).total_seconds()} seconds at {startTime}")
