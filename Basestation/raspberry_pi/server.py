@@ -91,13 +91,13 @@ def process():
     if roverContactOccured:
         roverTime = nextRoverstart
     else:
-        rovertime = tm.getNextTime(datetime.now()) + timedelta(seconds=args.bootdelay)
-        nextRoverstart = rovertime
+        roverTime = tm.getNextTime(datetime.now()) + timedelta(seconds=args.bootdelay)
+        nextRoverstart = roverTime
         
     now = datetime.now()
-    timeToNext = rovertime - now
+    timeToNext = roverTime - now
     roversleep = timeToNext.total_seconds()
-    logging.info(f"Next time for Rover is in {roversleep}seconds at {rovertime}")
+    logging.info(f"Next time for Rover is in {roversleep}seconds at {roverTime}")
     
     roverContactOccured = True
     
