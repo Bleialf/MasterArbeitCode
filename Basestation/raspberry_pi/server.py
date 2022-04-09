@@ -139,7 +139,6 @@ def worker():
             logging.info(f"Detecting images...Images in buffer: {len(images)}")
             image = images.pop()
             orig = image.copy()
-            datetime().now()
             start = timer()
             predboxes = objectDetector.detect(image,iou=0.45, score=args.score)
             _, _, _, [num_boxes] = predboxes
