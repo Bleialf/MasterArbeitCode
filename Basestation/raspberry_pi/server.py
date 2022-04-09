@@ -12,8 +12,9 @@ import scheduling.timeManagement as tm
 import os
 import sys
 import logging
+from timeit import default_timer as timer
 
-
+processStart = timer()
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -138,10 +139,13 @@ def worker():
             logging.info(f"Detecting images...Images in buffer: {len(images)}")
             image = images.pop()
             orig = image.copy()
+            datetime().now()
+            start = timer()
             predboxes = objectDetector.detect(image,iou=0.45, score=args.score)
             _, _, _, [num_boxes] = predboxes
             persistentImage = objectDetector.draw(orig, predboxes, args.show)
-            logging.info(f"We detected: {num_boxes} cars..")
+            end = timer()
+            logging.info(f"We detected: {num_boxes} cars..Detection took {timedelta(seconds=end-start)} seconds")
         else:
             if (delay == 0 and args.wittypipath is not None): 
                 if roverContactOccured:
@@ -150,8 +154,8 @@ def worker():
                     startTime = tm.getNextTime(datetime.now()) - timedelta(seconds=args.bootdelay)
                     
                 witty.set_startup('??', startTime.hour, startTime.minute, startTime.second)
-                
-                logging.info(f"Shutting down now. Waking up in {(startTime - datetime.now()).total_seconds()} seconds at {startTime}")
+                processEnd = timer()
+                logging.info(f"Shutting down now. Waking up in {(startTime - datetime.now()).total_seconds()} seconds at {startTime}...Complete Operation took {timedelta(seconds=processEnd-processStart)} seconds")
                 os.system("sudo shutdown -h now")
                 
                 
