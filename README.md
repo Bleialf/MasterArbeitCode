@@ -1,6 +1,6 @@
 # MasterArbeitCode
 
-## Installation
+## Installation Basisstation
 - Flashen von Raspberry Pi OS Lite (64bit) auf die eine SD-Karte
 - Headless Installation laut https://www.tomshardware.com/reviews/raspberry-pi-headless-setup-how-to,6028.html
 - Verbinden mittels ssh `ssh pi@raspberrypi` mit dem passwort "raspberry"
@@ -14,3 +14,5 @@
 - Download des weights-Files `wget https://github.com/Bleialf/MasterArbeitFiles/raw/main/yolov4-cars.tflite`
 - Starten der Basestation mittels `python server.py <weightsfile> <wittipyfolder>` mehr Informationen mittels `python server.py -h`
 - Beispiel `python server.py yolov4-cars.tflite ../../../wittypi/ --bootdelay 100 --initdelay 100 --sleepdelay 100`
+
+## Installation Roverstation
